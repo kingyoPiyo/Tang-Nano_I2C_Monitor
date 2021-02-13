@@ -1,0 +1,28 @@
+//Copyright (C)2014-2020 Gowin Semiconductor Corporation.
+//All rights reserved. 
+//File Title: Physical Constraints file
+//GOWIN Version: 1.9.7 Beta
+//Part Number: GW1N-LV1QN48C6/I5
+//Device: GW1N-1
+//Created Time: Sat 02 13 15:06:37 2021
+
+IO_LOC "uart_tx" 8;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33 SLEW_RATE=SLOW PULL_MODE=NONE DRIVE=8;
+IO_LOC "led_b" 17;
+IO_PORT "led_b" IO_TYPE=LVCMOS33 SLEW_RATE=SLOW PULL_MODE=NONE DRIVE=8;
+IO_LOC "led_g" 16;
+IO_PORT "led_g" IO_TYPE=LVCMOS33 SLEW_RATE=SLOW PULL_MODE=NONE DRIVE=8;
+IO_LOC "led_r" 18;
+IO_PORT "led_r" IO_TYPE=LVCMOS33 SLEW_RATE=SLOW PULL_MODE=NONE DRIVE=8;
+IO_LOC "i2c_sda" 10;
+IO_PORT "i2c_sda" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "i2c_scl" 46;
+IO_PORT "i2c_scl" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "btn_a" 15;
+IO_PORT "btn_a" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "mco" 35;
+IO_PORT "mco" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC "uart_rx" 9;
+IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "btn_b" 14;
+IO_PORT "btn_b" IO_TYPE=LVCMOS33 PULL_MODE=UP;
