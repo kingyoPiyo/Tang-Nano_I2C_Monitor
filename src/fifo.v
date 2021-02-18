@@ -5,7 +5,7 @@
 ********************************************************/
 module fifo #(
     parameter       DATA_WIDTH = 8,     // 8 bit
-    parameter       DATA_DEPTH = 11     // 2048 word
+    parameter       DATA_DEPTH = 13     // 8192 word
     ) (
     input   wire    i_clk,
     input   wire    i_res_n,

@@ -47,10 +47,10 @@ S 78 A 00 A 7F A P
 ## Resource Usage Summary:
 |  Resource  |  Usage |  Utilization  |
 | ---------- | ------ | ------------- |
-|  Logics  |  160/1152  | 13% |
-|  --LUTs,ALUs,ROM16s  |  160(139 LUT, 21 ALU, 0 ROM16)  | - |
+|  Logics  |  167/1152  | 14% |
+|  --LUTs,ALUs,ROM16s  |  167(142 LUT, 25 ALU, 0 ROM16)  | - |
 |  --SSRAMs(RAM16s)  |  0  | - |
-|  Registers  |  81/945  | 8% |
-|  --logic Registers  |  79/864  | 9% |
+|  Registers  |  85/945  | 8% |
+|  --logic Registers  |  83/864  | 9% |
 |  --I/O Registers  |  2/81  | 2% |
-|  BSRAMs  |  1 SDPB | 25% |
+|  BSRAMs  |  4 SDPB | 100% |
