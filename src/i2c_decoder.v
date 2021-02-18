@@ -1,8 +1,8 @@
 /********************************************************
-* Title    : Tang-Nano I2C Monitor
+* Title    : I2C Decoder
 * Date     : 2021/02/13
 * Design   : kingyo
-********************************************************/ 
+********************************************************/
 module i2c_decoder (
     input   wire            i_clk,
     input   wire            i_res_n,
