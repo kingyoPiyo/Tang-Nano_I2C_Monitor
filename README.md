@@ -44,7 +44,7 @@ S 78 A 00 A 7F A P
 ## IDE
 - GOWIN FPGA Designer Version 1.9.7.02 Beta build(44900)
 
-## Resource Usage Summary:
+## Resource Usage Summary
 |  Resource  |  Usage |  Utilization  |
 | ---------- | ------ | ------------- |
 |  Logics  |  167/1152  | 14% |
