@@ -40,27 +40,43 @@ module i2c_decoder (
         end
     endfunction
 
-    // I2C Signal Synchronizer
-    reg     [2:0]   r_scl_ff;
-    reg     [2:0]   r_sda_ff;
+    // I2C Signal Synchronizer & Glitch filte
+    wire            w_fltd_scl;
+    wire            w_fltd_sda;
+    glitch_filter gf_scl (
+        .i_clk ( i_clk ),
+        .i_res_n ( i_res_n ),
+        .i_d ( i_i2c_scl ),
+        .o_q ( w_fltd_scl )
+    );
+    glitch_filter gf_sda (
+        .i_clk ( i_clk ),
+        .i_res_n ( i_res_n ),
+        .i_d ( i_i2c_sda ),
+        .o_q ( w_fltd_sda )
+    );
+
+    // Edge detector
+    reg     [1:0]   r_scl_ff;
+    reg     [1:0]   r_sda_ff;
     always @(posedge i_clk or negedge i_res_n) begin
         if (~i_res_n) begin
-            r_scl_ff <= 3'b111;
-            r_sda_ff <= 3'b111;
+            r_scl_ff <= 2'b11;
+            r_sda_ff <= 2'b11;
         end else begin
-            r_scl_ff <= {r_scl_ff[1:0], i_i2c_scl};
-            r_sda_ff <= {r_sda_ff[1:0], i_i2c_sda};
+            r_scl_ff <= {r_scl_ff[0], w_fltd_scl};
+            r_sda_ff <= {r_sda_ff[0], w_fltd_sda};
         end
     end
 
     // Detect start bit (SDA negedge & SCL high)
-    wire    w_i2c_start = (r_sda_ff[2:1] == 2'b10) && r_scl_ff[2];
+    wire    w_i2c_start = (r_sda_ff == 2'b10) && r_scl_ff[1];
 
     // Detect stop bit (SDA posedge & SCL high)
-    wire    w_i2c_stop = (r_sda_ff[2:1] == 2'b01) && r_scl_ff[2];
+    wire    w_i2c_stop = (r_sda_ff == 2'b01) && r_scl_ff[1];
 
     // Detect SCL negedge
-    wire    w_i2c_scl_negedge = (r_scl_ff[2:1] == 2'b10);
+    wire    w_i2c_scl_negedge = (r_scl_ff == 2'b10);
 
     // I2C Decode
     reg             r_fifo_wen;
@@ -151,7 +167,7 @@ module i2c_decoder (
                     r_i2c_first_st_flg <= 1'b0;
                 end else begin
                     r_i2c_rx_bit_cnt <= r_i2c_rx_bit_cnt + 4'd1;
-                    r_i2c_rx_byte <= {r_i2c_rx_byte[7:0], r_sda_ff[2]};
+                    r_i2c_rx_byte <= {r_i2c_rx_byte[7:0], r_sda_ff[1]};
                     if (r_i2c_rx_bit_cnt == 4'd8) begin
                         r_i2c_rx_bit_cnt <= 4'd0;
                         r_i2c_data_ack_busy <= 1'b1;
