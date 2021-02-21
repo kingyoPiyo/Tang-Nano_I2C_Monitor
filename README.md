@@ -24,10 +24,10 @@ S 78 A 00 A F1 A P
 S 78 A 00 A DB A 40 A A4 A A6 A 2E A AF A P
 S 78 A 00 A 22 A 00 A FF A 21 A 00 A P
 S 78 A 00 A 7F A P
-~ ------------------- Start condition
-  ~~ ---------------- Data (hexadecimal)
-     ~ -------------- ACK
-                 ~ -- Stop condition
+^ ------------------- Start condition
+  ^^ ---------------- Data (hexadecimal)
+     ^ -------------- ACK
+                 ^ -- Stop condition
 
 
 ## Timestamp Enable
@@ -43,11 +43,11 @@ S 78 A 00 A 7F A P
 00001B1C S 78 A 00 A DB A 40 A A4 A A6 A 2E A AF A P
 00002275 S 78 A 00 A 22 A 00 A FF A 21 A 00 A P
 0000273B S 78 A 00 A 7F A P
-~~~~~~~~ ------------ Timestamp (hexadecimal, max : FFFFFFFF) [us]
+^^^^^^^^ ------------ Timestamp (hexadecimal, max : FFFFFFFF) [us]
                       (Start counting from the first start bit detection.)
-         ~ ---------- Start condition
-           ~~ ------- Data (hexadecimal)
-              ~ ----- ACK
+         ^ ---------- Start condition
+           ^^ ------- Data (hexadecimal)
+              ^ ----- ACK
 ```
 
 |  Symbol  |  Description |
