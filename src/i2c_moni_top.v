@@ -75,7 +75,7 @@ module i2c_moni_top (
         .i_res_n ( w_res_n ),
         .i_cnt_res ( w_btn_b_long ),
         .i_cnt_en ( w_counter_en ),
-        .o_cnt_val ( w_counter_val )
+        .o_cnt_val ( w_counter_val[31:0] )
     );
 
     //==========================
@@ -86,7 +86,7 @@ module i2c_moni_top (
         .i_res_n ( w_res_n ),
         .i_i2c_scl ( i2c_scl ),
         .i_i2c_sda ( i2c_sda ),
-        .i_timestamp ( w_counter_val ),
+        .i_timestamp ( w_counter_val[31:0] ),
         .i_timestamp_en ( w_timestamp_en ),
         .i_timestamp_res ( w_btn_b_long ),
         .o_cnt_en ( w_counter_en ),
