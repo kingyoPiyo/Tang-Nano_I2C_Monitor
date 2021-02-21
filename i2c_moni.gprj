@@ -5,12 +5,15 @@
     <Version>5</Version>
     <Device name="GW1N-1" pn="GW1N-LV1QN48C6/I5">gw1n1-004</Device>
     <FileList>
+        <File path="src/btn_input.v" type="file.verilog" enable="1"/>
         <File path="src/fifo.v" type="file.verilog" enable="1"/>
         <File path="src/glitch_filter.v" type="file.verilog" enable="1"/>
         <File path="src/i2c_decoder.v" type="file.verilog" enable="1"/>
         <File path="src/i2c_moni_top.v" type="file.verilog" enable="1"/>
         <File path="src/led.v" type="file.verilog" enable="1"/>
         <File path="src/sync_reset.v" type="file.verilog" enable="1"/>
+        <File path="src/time_counter.v" type="file.verilog" enable="1"/>
+        <File path="src/toggle_reg.v" type="file.verilog" enable="1"/>
         <File path="src/uart_tx.v" type="file.verilog" enable="1"/>
         <File path="i2c_moni.cst" type="file.cst" enable="1"/>
         <File path="i2c_moni.sdc" type="file.sdc" enable="1"/>

@@ -11,6 +11,7 @@ I2C Bus monitor on Tang-Nano FPGA !!
 ## Output Example
 
 ```
+## Timestamp Disable (default)
 S 78 A 00 A AE A D5 A 80 A A8 A P
 S 78 A 00 A 3F A P
 S 78 A 00 A D3 A 00 A 40 A 8D A P
@@ -23,6 +24,30 @@ S 78 A 00 A F1 A P
 S 78 A 00 A DB A 40 A A4 A A6 A 2E A AF A P
 S 78 A 00 A 22 A 00 A FF A 21 A 00 A P
 S 78 A 00 A 7F A P
+~ ------------------- Start condition
+  ~~ ---------------- Data (hexadecimal)
+     ~ -------------- ACK
+                 ~ -- Stop condition
+
+
+## Timestamp Enable
+00000000 S 78 A 00 A AE A D5 A 80 A A8 A P
+00000483 S 78 A 00 A 3F A P
+000006B2 S 78 A 00 A D3 A 00 A 40 A 8D A P
+00000AD1 S 78 A 00 A 14 A P
+00000CFB S 78 A 00 A 20 A 00 A A1 A C8 A P
+00001126 S 78 A 00 A DA A 12 A 81 A P
+0000149A S 78 A 00 A CF A P
+000016C5 S 78 A 00 A D9 A P
+000018EF S 78 A 00 A F1 A P
+00001B1C S 78 A 00 A DB A 40 A A4 A A6 A 2E A AF A P
+00002275 S 78 A 00 A 22 A 00 A FF A 21 A 00 A P
+0000273B S 78 A 00 A 7F A P
+~~~~~~~~ ------------ Timestamp (hexadecimal, max : FFFFFFFF) [us]
+                      (Start counting from the first start bit detection.)
+         ~ ---------- Start condition
+           ~~ ------- Data (hexadecimal)
+              ~ ----- ACK
 ```
 
 |  Symbol  |  Description |
@@ -36,7 +61,12 @@ S 78 A 00 A 7F A P
 | -------- | ------ |
 | Red | UART Tx FIFO Overflow (Press button A to reset) |
 | Green | UART Tx busy | 
-| Blue | Not use |
+| Blue | ON : Timestamp enabled / OFF : Timestamp disabled |
+
+|  Button  |  Description |
+| -------- | ------ |
+| A | Global reset |
+| B | Short (<1000ms) press : Toggle Timestamp Enable / Long (>= 1000ms) press : Reset Timestamp counter | 
 
 ## Schematic
 ![Schematic](doc/Schematic.png)  
@@ -47,10 +77,10 @@ S 78 A 00 A 7F A P
 ## Resource Usage Summary
 |  Resource  |  Usage |  Utilization  |
 | ---------- | ------ | ------------- |
-|  Logics  |  195/1152  | 16% |
-|  --LUTs,ALUs,ROM16s  |  195(170 LUT, 25 ALU, 0 ROM16)  | - |
+|  Logics  |  465/1152  | 40% |
+|  --LUTs,ALUs,ROM16s  |  465(440 LUT, 25 ALU, 0 ROM16)  | - |
 |  --SSRAMs(RAM16s)  |  0  | - |
-|  Registers  |  101/945  | 10% |
-|  --logic Registers  |  99/864  | 11% |
+|  Registers  |  227/945  | 24% |
+|  --logic Registers  |  225/864  | 26% |
 |  --I/O Registers  |  2/81  | 2% |
 |  BSRAMs  |  4 SDPB | 100% |

@@ -11,6 +11,12 @@ module i2c_decoder (
     input   wire            i_i2c_scl,
     input   wire            i_i2c_sda,
 
+    // Time stamp
+    input   wire    [31:0]  i_timestamp,
+    input   wire            i_timestamp_en,
+    input   wire            i_timestamp_res,
+    output  reg             o_cnt_en,
+
     // OUTPUT
     output  wire            o_wen,
     output  wire    [7:0]   o_wdata
@@ -81,43 +87,77 @@ module i2c_decoder (
     // I2C Decode
     reg             r_fifo_wen;
     reg     [7:0]   r_wdata;
-    reg     [2:0]   r_i2c_state;
+    reg     [3:0]   r_i2c_state;
     reg             r_i2c_start_busy;
     reg             r_i2c_stop_busy;
     reg             r_i2c_data_ack_busy;
     reg             r_i2c_first_st_flg;
     reg     [3:0]   r_i2c_rx_bit_cnt;
     reg     [8:0]   r_i2c_rx_byte;  // Data[7:0] + ACK
+    reg             r_det_stopbit;
+    reg     [31:0]  r_timestamp_ff;
     always @(posedge i_clk or negedge i_res_n) begin
         if (~i_res_n) begin
             r_fifo_wen <= 1'b0;
             r_wdata <= 8'd0;
-            r_i2c_state <= 3'd0;
+            r_i2c_state <= 4'd0;
             r_i2c_start_busy <= 1'b0;
             r_i2c_stop_busy <= 1'b0;
             r_i2c_data_ack_busy <= 1'b0;
             r_i2c_first_st_flg <= 1'b0;
             r_i2c_rx_bit_cnt <= 4'd0;
             r_i2c_rx_byte <= 9'd0;
+            r_det_stopbit <= 1'b1;
+            r_timestamp_ff <= 32'd0;
+            o_cnt_en <= 1'b0;
         end else begin
+            // Timestamp Counter Disable
+            if (i_timestamp_res) begin
+                o_cnt_en <= 1'b0;
 
             // START Bit
-            if (r_i2c_start_busy) begin
-                r_i2c_state <= r_i2c_state + 3'd1;
-                case (r_i2c_state)
-                    0: begin
-                        r_wdata <= 8'h53;   // S
-                        r_fifo_wen <= 1'b1;
-                    end
-                    1: begin
-                        r_wdata <= 8'h20;   // SP
-                        r_i2c_start_busy <= 1'b0;
-                    end
-                endcase
+            end else if (r_i2c_start_busy) begin
+                r_i2c_state <= r_i2c_state + 4'd1;
+                r_det_stopbit <= 1'b0;
+                o_cnt_en <= 1'b1;
+
+                if (i_timestamp_en) begin
+                    case (r_i2c_state)
+                        0: begin
+                            r_timestamp_ff <= i_timestamp;
+                            r_wdata <= getHexStr(i_timestamp[31:28]);
+                            r_fifo_wen <= 1'b1;
+                        end
+                        1:  r_wdata <= getHexStr(r_timestamp_ff[27:24]);
+                        2:  r_wdata <= getHexStr(r_timestamp_ff[23:20]);
+                        3:  r_wdata <= getHexStr(r_timestamp_ff[19:16]);
+                        4:  r_wdata <= getHexStr(r_timestamp_ff[15:12]);
+                        5:  r_wdata <= getHexStr(r_timestamp_ff[11: 8]);
+                        6:  r_wdata <= getHexStr(r_timestamp_ff[ 7: 4]);
+                        7:  r_wdata <= getHexStr(r_timestamp_ff[ 3: 0]);
+                        8:  r_wdata <= 8'h20;   // SP
+                        9:  r_wdata <= 8'h53;   // S
+                        10: begin
+                            r_wdata <= 8'h20;   // SP
+                            r_i2c_start_busy <= 1'b0;
+                        end
+                    endcase
+                end else begin
+                    case (r_i2c_state)
+                        0: begin
+                            r_wdata <= 8'h53;   // S
+                            r_fifo_wen <= 1'b1;
+                        end
+                        1: begin
+                            r_wdata <= 8'h20;   // SP
+                            r_i2c_start_busy <= 1'b0;
+                        end
+                    endcase
+                end
 
             // STOP Bit
             end else if (r_i2c_stop_busy) begin
-                r_i2c_state <= r_i2c_state + 3'd1;
+                r_i2c_state <= r_i2c_state + 4'd1;
                 case (r_i2c_state)
                     0: begin
                         r_wdata <= 8'h50;   // P
@@ -132,7 +172,7 @@ module i2c_decoder (
 
             // DATA and ACK Flag
             end else if (r_i2c_data_ack_busy) begin
-                r_i2c_state <= r_i2c_state + 3'd1;
+                r_i2c_state <= r_i2c_state + 4'd1;
                 case (r_i2c_state)
                     0: begin
                         r_wdata <= getHexStr(r_i2c_rx_byte[8:5]);
@@ -150,19 +190,20 @@ module i2c_decoder (
 
             // Catch START Bit
             end else if (w_i2c_start) begin
-                r_i2c_state <= 3'd0;
+                r_i2c_state <= 4'd0;
                 r_i2c_start_busy <= 1'b1;
                 r_i2c_first_st_flg <= 1'b1;
                 r_i2c_rx_bit_cnt <= 4'd0;
 
             // Catch STOP Bit
             end else if (w_i2c_stop) begin
-                r_i2c_state <= 3'd0;
+                r_i2c_state <= 4'd0;
                 r_i2c_stop_busy <= 1'b1;
+                r_det_stopbit <= 1'b1;
 
             // Catch SCL negedge
             end else if (w_i2c_scl_negedge) begin
-                r_i2c_state <= 3'd0;
+                r_i2c_state <= 4'd0;
                 if (r_i2c_first_st_flg) begin
                     r_i2c_first_st_flg <= 1'b0;
                 end else begin
